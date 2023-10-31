@@ -1,0 +1,37 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim strShortFN As String 
+	Dim strFN As String
+	
+
+'	****************************************************************************
+'	 TEST Case File_UndoCheckOut - Success
+'	****************************************************************************	
+'	Try
+'		'Test 1 
+'		strShortFN = "PART-101.ipt"
+'		strFN = oDLL.File_UndoCheckOut(strShortFN)
+'		MsgBox("UndoCheckOut = " & strFN,, "Undo Check Out")
+'	Catch
+'	End Try	
+
+
+	Try
+		'Test 2
+		strShortFN = "ASSEMBLY-301-M.iam"
+		strFN = oDLL.File_UndoCheckOut(strShortFN)
+		MsgBox("UndoCheckOut = " & strFN,,  "Undo Check Out")		
+	Catch
+	End Try	
+
+
+		
+End Sub

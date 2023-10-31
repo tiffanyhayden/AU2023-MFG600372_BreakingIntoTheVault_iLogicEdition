@@ -1,0 +1,36 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim strFolderPath As String = "C:\_VAULT2019\AU2023"
+	Dim strFNs As String
+	Dim strExt As String 
+	
+	
+	'****************************************************************************
+	' TEST Case Folder_ExportByExtension
+	'***************************************************************************	
+'	Try
+'		'strExt = ".ipt"		'TEST 1
+'		'strExt = "-M.iam"  'TEST 2
+
+'		strFNs = oDLL.Folder_ExportByExtension(strFolderPath, strExt)
+'		MsgBox(strFNs, , "Export Folder Data")
+'	Catch
+'	End Try
+	
+	Try
+		'strExt = ".iam"		'TEST 1
+		strExt = "ALL"		'TEST 2
+		strFNs = oDLL.Folder_ExportByExtension(strFolderPath, strExt, "C:\_VAULT2019\AU2023\Export.txt")
+	Catch
+	End Try
+
+
+End Sub

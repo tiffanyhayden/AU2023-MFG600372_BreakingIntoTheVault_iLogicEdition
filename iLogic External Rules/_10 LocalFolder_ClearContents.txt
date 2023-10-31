@@ -1,0 +1,21 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim strFolderPath As String = "C:\_VAULT2019\AU2023"
+
+	'****************************************************************************
+	' TEST CASE LocalFolder_ClearContents - Success
+	'****************************************************************************	
+	Try
+		oDLL.LocalFolder_ClearContents(strFolderPath)
+	Catch
+	End Try	
+
+End Sub

@@ -1,0 +1,22 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim strShortFN As String = "PART-101.ipt"
+
+
+	'****************************************************************************
+	' TEST CASE GetFromFile_LatestVersionsLifecycleState - Success
+	'****************************************************************************	
+	Try
+		strFN = oDLL.GetFromFile_LatestVersionsLifecycleState(strShortFN)
+		MsgBox("LatestVersionsLifecycleState = " & strFN, , "GetFromFile_LatestVersionsLifecycleState")
+	Catch
+	End Try	
+End Sub

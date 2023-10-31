@@ -1,0 +1,36 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim strShortFN As String
+	Dim blnIsCheckedOut As Boolean 
+	
+
+
+	'****************************************************************************
+	' TEST Case File_IsCheckedOut - Success
+	'****************************************************************************	
+	
+'	Try
+'		strShortFN = "PART-101.ipt"
+'		blnIsCheckedOut = oDLL.File_IsCheckedOut(strShortFN)
+'		MsgBox("Is " & strShortFN & " Checked Out? = " & blnIsCheckedOut, , "Status")
+'	Catch
+'	End Try
+	
+	
+	Try		
+		strShortFN = "ASSEMBLY-401-D.iam"
+		blnIsCheckedOut = oDLL.File_IsCheckedOut(strShortFN)
+		MsgBox("Is " & strShortFN & " Checked Out? = " & blnIsCheckedOut, , "Status")
+	Catch
+	End Try
+
+		
+End Sub

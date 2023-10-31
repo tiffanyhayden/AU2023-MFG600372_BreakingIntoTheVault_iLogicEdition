@@ -1,0 +1,32 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim oDict As Dictionary(Of String, String)
+	Dim strItemNum As String 
+		
+	'****************************************************************************
+	' TEST CASE Item_FindAllAssociatedFiles - Success
+	'****************************************************************************	
+	Try
+		'strItemNum = "100841913"	'TEST 1
+		strItemNum = "100841902"	'TEST 2
+		
+		oDict = oDLL.Item_FindAllAssociatedFiles(strItemNum)
+		MsgBox("Primary = " & oDict("Primary") & vbCrLf & _
+				"PrimarySub = " & oDict("PrimarySub") & vbCrLf & _
+				"Secondary = " & oDict("Secondary") & vbCrLf & _
+				"SecondarySub = " & oDict("SecondarySub") & vbCrLf & _
+				"StandardComponent = " & oDict("StandardComponent") & vbCrLf & _
+				"Tertiary = " & oDict("Tertiary"), , "Item_FindAllAssociatedFiles" )
+	Catch
+		
+	End Try		
+		
+End Sub

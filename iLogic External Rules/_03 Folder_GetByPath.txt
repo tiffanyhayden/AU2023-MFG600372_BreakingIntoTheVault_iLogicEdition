@@ -1,0 +1,33 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim strFN As String
+	Dim strFolderPath As String = "C:\_VAULT2019\AU2023"
+	
+	
+	'****************************************************************************
+	' TEST CASE Folder_GetByPath
+	'****************************************************************************
+'	Try
+'		strFN = oDLL.Folder_GetByPath(strFolderPath)
+'		MsgBox(strFN, , "Get Folder")
+'	Catch
+'	End Try
+	
+	
+	Try
+		strFN = oDLL.Folder_GetByPath(strFolderPath, True)
+		MsgBox(strFN, , "Get Folder")
+	Catch
+	End Try
+	
+
+		
+End Sub

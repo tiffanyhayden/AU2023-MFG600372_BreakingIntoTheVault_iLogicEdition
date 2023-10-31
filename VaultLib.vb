@@ -110,8 +110,7 @@ Public Class VaultLib
         '*******************************************************************************************
         If Vault_IsConnected() = False Then Exit Function
 
-
-        Dim oDocService As ACW.DocumentService = oConnection.WebServiceManager.DocumentService
+        Dim oDocService As ACW.DocumentService
         Dim oFile As ACW.File = Nothing
         Dim oPropDefs As ACW.PropDef() = oConnection.WebServiceManager.PropertyService.GetPropertyDefinitionsByEntityClassId("FILE")
         Dim oPropDef As ACW.PropDef = oPropDefs.[Single](Function(n) n.SysName = "ClientFileName")
@@ -122,7 +121,6 @@ Public Class VaultLib
         Dim oStatus As ACW.SrchStatus = Nothing
         Dim oResults As ACW.File()
         Dim lgFolderIds As Long() = Nothing
-
 
         '*******************************************************************************************
         ' ESTABLISH DOCUMENT SERVICE CONNECTION USING ABOVE CONNECTION
@@ -158,7 +156,6 @@ Public Class VaultLib
             Exit Function
         End Try
 
-
         '*******************************************************************************************
         ' LOOP THROUGH FOLDERS AND ADD ID TO LONG ARRAY
         '*******************************************************************************************
@@ -168,12 +165,10 @@ Public Class VaultLib
             End If
         Next
 
-
         '*******************************************************************************************
         ' SET LONG ARRAY TO NOTHING IF NO IDs ARE FOUND
         '*******************************************************************************************
         If lgFolderIds.Length = 0 Then lgFolderIds = {Nothing}
-
 
         '*******************************************************************************************
         ' CREATE SEARCH
@@ -185,7 +180,6 @@ Public Class VaultLib
             Exit Function
         End Try
 
-
         '*******************************************************************************************
         ' CREATE SEARCH
         '*******************************************************************************************
@@ -195,7 +189,6 @@ Public Class VaultLib
             MsgBox("No file returned, check file name accuracy.", MsgBoxStyle.OkOnly, "Error")
             Exit Function
         End Try
-
 
     End Function
     Sub File_Acquire(oFile As ACW.File, Optional blnDoCheckOut As Boolean = False)
@@ -219,7 +212,6 @@ Public Class VaultLib
             Exit Sub
         End Try
 
-
         '*******************************************************************************************
         ' CREATE FILE ITERATION
         '*******************************************************************************************
@@ -229,8 +221,6 @@ Public Class VaultLib
             MsgBox("Settings failed.", MsgBoxStyle.OkOnly, "Error")
             Exit Sub
         End Try
-
-
 
         '*******************************************************************************************
         ' DEFINE SETTING OPTIONS
@@ -247,30 +237,25 @@ Public Class VaultLib
         oSettings.OptionsRelationshipGathering.FileRelationshipSettings.RecurseParents = False
         oSettings.OptionsRelationshipGathering.FileRelationshipSettings.ReleaseBiased = False
 
-
-
         '*******************************************************************************************
         ' SET DOWNLOAD OR CHECKOUT FILE SETTING. ADD TO ACQUIRE FILE
         '*******************************************************************************************
         If blnDoCheckOut = True Then
             oSettings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Checkout
-            oSettings.AddFileToAcquire(oFileIteration, VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Checkout)
         Else
             oSettings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Download
-            oSettings.AddFileToAcquire(oFileIteration, VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Download)
         End If
 
         '*******************************************************************************************
         ' ACQUIRE FILE
         '*******************************************************************************************
         Try
+            oSettings.AddFileToAcquire(oFileIteration, oSettings.DefaultAcquisitionOption)
             oConnection.FileManager.AcquireFiles(oSettings)
         Catch ex As Exception
             MsgBox("Acquire file failed.", MsgBoxStyle.OkOnly, "Error")
             Exit Sub
         End Try
-
-
 
     End Sub
 
@@ -279,9 +264,8 @@ Public Class VaultLib
 
 #Region "_03 Folder_GetByPath"
 
-    Function Folder_GetByPath(strFolderLocalPath As String, Optional blnDeleteDirectory As Boolean = False) As String
-
-
+    Function Folder_GetByPath(strFolderLocalPath As String, Optional blnDeleteDirectory As Boolean = False,
+                              Optional strLocalWorkingFolder As String = "C:/_VAULT2019") As String
         '*******************************************************************************************
         ' CHECK MAJOR REQUIREMENTS FOR THIS FUNCTION AND EXITS EARLY IF NEEDED. 
         '*******************************************************************************************
@@ -323,7 +307,6 @@ Public Class VaultLib
             Catch
                 MsgBox("Clearing the directory was not possible.", MsgBoxStyle.OkOnly, "Error")
             End Try
-
         End If
 
         '***************************************************************
@@ -336,7 +319,7 @@ Public Class VaultLib
         ' CLEAN UP WORKING FOLDER PATH TO MATCH VAULT PATH SCHEME
         '***************************************************************
         strVaultPath = Replace(strVaultPath, "\", "/")
-        strVaultPath = Replace(strVaultPath, "C:/_VAULT2019", "$")
+        strVaultPath = Replace(strVaultPath, strLocalWorkingFolder, "$")
         '***************************************************************
         ' FINDS THE FOLDER BASED OFF OF THE FULL PATH
         '***************************************************************
@@ -360,7 +343,6 @@ Public Class VaultLib
             Exit Function
         End Try
 
-
         '***************************************************************
         'ACQUIRES THE FOLDER AND CONTENTS IF A FOLDER IS FOUND. 
         '***************************************************************
@@ -373,8 +355,6 @@ Public Class VaultLib
             MsgBox("Folder could not be acquired.", MsgBoxStyle.OkOnly, "Error")
             Exit Function
         End Try
-
-
 
     End Function
 
@@ -492,7 +472,7 @@ Public Class VaultLib
 
 #Region "_04 Folder_ExportByExtension"
 
-    Public Function Folder_ExportByExtension(strFolderFullPath As String, strFileExtension As String, Optional strTargetPath As String = "") As String
+    Public Function Folder_ExportByExtension(strFolderFullPath As String, strFileExtension As String, Optional strTargetPath As String = "", Optional strLocalWorkingFolder As String = "C:\_VAULT2019") As String
 
 
 
@@ -519,7 +499,7 @@ Public Class VaultLib
         '*******************************************************************************************
         ' ADJUST VAULT FILE PATH TO MEET STANDARD PATH NAMING SCHEME
         '*******************************************************************************************
-        If strFolderFullPath.StartsWith("C:\") Then strFolderFullPath = strFolderFullPath.Replace("C:\_VAULT2019", "$") ' CHANGE WORKING FOLDER NAME. YOURS WILL BE DIFFERENT
+        If strFolderFullPath.StartsWith("C:\") Then strFolderFullPath = strFolderFullPath.Replace(strLocalWorkingFolder, "$") ' CHANGE WORKING FOLDER NAME. YOURS WILL BE DIFFERENT
         If strFolderFullPath.EndsWith("\") Then strFolderFullPath = strFolderFullPath.TrimEnd(CChar("\"))
         If strFolderFullPath.EndsWith("/") Then strFolderFullPath = strFolderFullPath.TrimEnd(CChar("/"))
         If InStr(strFolderFullPath, "\") Then strFolderFullPath = strFolderFullPath.Replace("\", "/")
@@ -635,7 +615,7 @@ Public Class VaultLib
 
     End Function
 
-    Function Folder_FindByPath(strFolderPath As String, Optional intSrchOper As Integer = 1) As ACW.Folder
+    Function Folder_FindByPath(strVaultFolderPath As String, Optional intSrchOper As Integer = 1) As ACW.Folder
         '*******************************************************************************************
         ' GIVEN A CONNECTION AND FOLDER NAME FIND A FOLDER IN VAULT
         '*******************************************************************************************
@@ -646,7 +626,6 @@ Public Class VaultLib
         Dim oSearch As New ACW.SrchCond()
         Dim oFolders As ACW.Folder()
         Dim oFolder As ACW.Folder = Nothing
-
 
         '*******************************************************************************************
         ' ESTABLISH VAULT CONNECTION USING INVENTOR VAULT ADD-IN
@@ -663,8 +642,6 @@ Public Class VaultLib
             Exit Function
         End Try
 
-
-
         '*******************************************************************************************
         ' CREATE PROP DEF(S) USING CONNECTION.
         '*******************************************************************************************
@@ -676,8 +653,6 @@ Public Class VaultLib
             Exit Function
         End Try
 
-
-
         '*******************************************************************************************
         ' DEFINE SEARCH CONDITION OPTIONS
         '*******************************************************************************************
@@ -686,12 +661,11 @@ Public Class VaultLib
             oSearch.PropTyp = ACW.PropertySearchType.SingleProperty
             oSearch.SrchOper = intSrchOper
             oSearch.SrchRule = ACW.SearchRuleType.Must
-            oSearch.SrchTxt = strFolderPath
+            oSearch.SrchTxt = strVaultFolderPath
         Catch EX As Exception
             MsgBox("Search criteria failed.", MsgBoxStyle.OkOnly, "Error")
             Exit Function
         End Try
-
 
         '*******************************************************************************************
         ' CREATE SEARCH
@@ -703,8 +677,6 @@ Public Class VaultLib
             Exit Function
         End Try
 
-
-
         '*******************************************************************************************
         ' FIND FIRST FOLDER FOUND
         '*******************************************************************************************
@@ -714,7 +686,6 @@ Public Class VaultLib
             MsgBox("Setting folder failed.", MsgBoxStyle.OkOnly, "Error")
             Exit Function
         End Try
-
 
     End Function
 
@@ -854,17 +825,15 @@ Public Class VaultLib
             Exit Function
         End If
 
-
         Dim oFileVersions As ACW.File() = Nothing
         Dim oFileVersion As ACW.File
         Dim oFile As ACW.File
-
+        Dim oDocumentService As ACW.DocumentService = oConnection.WebServiceManager.DocumentService
 
         '*******************************************************************************************
         ' ESTABLISH VAULT CONNECTION USING VAULT ADD-IN WITHIN INVENTOR
         '*******************************************************************************************
         If Vault_IsConnected() = False Then Exit Function
-
 
         '*******************************************************************************************
         ' FIND FILE 
@@ -876,17 +845,15 @@ Public Class VaultLib
             Exit Function
         End Try
 
-
         '*******************************************************************************************
         ' GET ALL VERSIONS FOR FILE
         '*******************************************************************************************
         Try
-            If oFile IsNot Nothing Then oFileVersions = oConnection.WebServiceManager.DocumentService.GetFilesByMasterId(oFile.MasterId)
+            If oFile IsNot Nothing Then oFileVersions = oDocumentService.GetFilesByMasterId(oFile.MasterId)
         Catch ex As Exception
             MsgBox("File versions were not available.", MsgBoxStyle.OkOnly, "Error")
             Exit Function
         End Try
-
 
         '*******************************************************************************************
         ' REVERSE THE ARRAY TO GO FROM EARLIEST VERSION TO LATEST
@@ -904,15 +871,9 @@ Public Class VaultLib
         If oFileVersions IsNot Nothing Then
             For Each oFileVersion In oFileVersions
                 GetFromFile_LatestVersionCreator = oFileVersion.CreateUserName.ToUpper
-                'If InStr(oFileVersion.CreateUserId.ToString.ToUpper, "ADMIN") > 0 Then
-                '    'Skip
-                'Else
-                '    LatestVersionCreator = oFileVersion.CreateUserName.ToUpper
-                '    Exit For
-                'End If
+                Exit For
             Next
         End If
-
 
     End Function
 
@@ -923,7 +884,6 @@ Public Class VaultLib
         '*******************************************************************************************
         ' THIS FUNCTION "GETS" THE LATEST VERSION OF A FILE THAT IS AT A SPECIFIED LIFECYCLE STATE
         '*******************************************************************************************
-
         '*******************************************************************************************
         ' CHECK MAJOR REQUIREMENTS FOR THIS FUNCTION AND EXITS EARLY IF NEEDED. 
         '*******************************************************************************************
@@ -944,12 +904,12 @@ Public Class VaultLib
         Dim oFileIteration As VDF.Vault.Currency.Entities.FileIteration
         Dim strFullFileName As String
         Dim oServices As VDF.Vault.Services.Connection.IWorkingFoldersManager
+        Dim oDocumentService As ACW.DocumentService = oConnection.WebServiceManager.DocumentService
 
         '*******************************************************************************************
         ' ESTABLISH VAULT CONNECTION USING VAULT ADD-IN WITHIN INVENTOR
         '*******************************************************************************************
         If Vault_IsConnected() = False Then Exit Function
-
 
         '*******************************************************************************************
         ' FIND FILE 
@@ -962,13 +922,12 @@ Public Class VaultLib
             Exit Function
         End Try
 
-
         '*******************************************************************************************
         ' CREATE AN ARRAY OF FILE VERSIONS TO ITERATE THROUGH
         '*******************************************************************************************
 
         Try
-            If oFile IsNot Nothing Then oFileVersions = oConnection.WebServiceManager.DocumentService.GetFilesByMasterId(oFile.MasterId)
+            If oFile IsNot Nothing Then oFileVersions = oDocumentService.GetFilesByMasterId(oFile.MasterId)
         Catch ex As Exception
             MsgBox("Master ID was not available.", MsgBoxStyle.OkOnly, "Error")
             Exit Function
@@ -982,7 +941,6 @@ Public Class VaultLib
         '*******************************************************************************************
         ' FINDS THE LATEST VERSION OF A FILE AT THE LIFECYCLE STATE NEEDED
         '*******************************************************************************************
-
         'INCREASES BY THE LATEST VERSION FORWARD
         For Each oFileVersion In oFileVersions
             If oFileVersion.FileLfCyc.LfCycStateName.ToUpper = strLifeCycleState Then
@@ -991,19 +949,16 @@ Public Class VaultLib
             End If
         Next
 
-
         If oLatestFileByLifeCycle Is Nothing Then
             MsgBox("A file at that lifecycle state was not found.", MsgBoxStyle.OkOnly, "Error")
             Exit Function
         End If
-
 
         '*******************************************************************************************
         ' TRY TO GET THE FILE FROM VAULT IF NOT CHECKED OUT
         '*******************************************************************************************
 
         If oLatestFileByLifeCycle IsNot Nothing Then
-
             oFileIteration = New VDF.Vault.Currency.Entities.FileIteration(oConnection, oFile)
             oServices = oConnection.WorkingFoldersManager
             strFullFileName = oServices.GetPathOfFileInWorkingFolder(oFileIteration).FullPath.ToString
@@ -1022,7 +977,6 @@ Public Class VaultLib
                 Exit Function
             End Try
         End If
-
 
     End Function
 
@@ -1045,12 +999,17 @@ Public Class VaultLib
 
         Dim oFileVersions As ACW.File() = Nothing
         Dim oFile As ACW.File
+        Dim oDocumentService As ACW.DocumentService
 
         '*******************************************************************************************
         ' ESTABLISH VAULT CONNECTION USING VAULT ADD-IN WITHIN INVENTOR
         '*******************************************************************************************
         If Vault_IsConnected() = False Then Exit Function
 
+        '*******************************************************************************************
+        ' SETTING THE DOCUMENT SERVICE OBJECT
+        '*******************************************************************************************
+        oDocumentService = oConnection.WebServiceManager.DocumentService
 
         '*******************************************************************************************
         ' FIND FILE 
@@ -1066,12 +1025,11 @@ Public Class VaultLib
         ' GET ALL VERSIONS FOR FILE
         '*******************************************************************************************
         Try
-            If oFile IsNot Nothing Then oFileVersions = oConnection.WebServiceManager.DocumentService.GetFilesByMasterId(oFile.MasterId)
+            If oFile IsNot Nothing Then oFileVersions = oDocumentService.GetFilesByMasterId(oFile.MasterId)
         Catch ex As Exception
             MsgBox("File versions were not available.", MsgBoxStyle.OkOnly, "Error")
             Exit Function
         End Try
-
 
         '*******************************************************************************************
         ' REVERSE THE ARRAY TO GO FROM EARLIEST VERSION TO LATEST
@@ -1083,7 +1041,6 @@ Public Class VaultLib
             Exit Function
         End Try
 
-
         '*******************************************************************************************
         ' SET THE FIRST INSTANCE OF THE ARRAY AND IT'S LIFECYCLE TO THE FUNCTION
         '*******************************************************************************************
@@ -1093,7 +1050,6 @@ Public Class VaultLib
             MsgBox("Latest Lifecycle state name was not available.", MsgBoxStyle.OkOnly, "Error")
             Exit Function
         End Try
-
 
     End Function
 
@@ -1367,3 +1323,10 @@ Public Class VaultLib
 
 
 End Class
+
+
+
+
+
+
+

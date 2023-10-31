@@ -1,0 +1,24 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim strShortFN As String = "PART-101.ipt"
+	Dim strFN As String
+
+	
+	'****************************************************************************
+	' TEST CASE GetFromFile_LatestVersionCreator - Success
+	'****************************************************************************	
+	Try
+		strFN = oDLL.GetFromFile_LatestVersionCreator(strShortFN)
+		MsgBox("LatestVersionCreator = " & strFN, , "Created By")
+	Catch
+	End Try	
+	
+End Sub

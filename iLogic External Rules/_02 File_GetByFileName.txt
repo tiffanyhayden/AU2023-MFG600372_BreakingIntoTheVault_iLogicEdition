@@ -1,0 +1,32 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim strShortFN As String = "PART-101.ipt"
+	Dim strFN As String
+	
+
+	'****************************************************************************
+	' TEST Case File_GetByFileName
+	'****************************************************************************
+'	Try
+'		strFN = oDLL.File_GetByFileName(strShortFN)
+'		MsgBox("File = " & strFN,,  "Get File")
+'	Catch
+'	End Try
+	
+	
+	Try
+		strFN = oDLL.File_GetByFileName(strShortFN, True)
+		MsgBox("File = " & strFN,,  "Get and Checkout File")
+	Catch
+	End Try
+	
+
+End Sub

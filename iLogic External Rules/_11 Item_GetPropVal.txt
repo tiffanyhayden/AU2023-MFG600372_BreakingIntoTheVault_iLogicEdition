@@ -1,0 +1,27 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim strPropName As String 
+	Dim strProp As String 
+	
+	'****************************************************************************
+	' TEST CASE Item_GetPropVal - Success
+	' "Lifecycle Definition", "State", "BULK"
+	'****************************************************************************	
+	Try
+		'strPropName = "BULK"					'TEST 1
+		'strPropName = "Lifecycle Definition"	'TEST 2
+		strPropName = "State"					'TEST 3
+		strProp = oDLL.Item_GetPropVal("100841913", strPropName, True)
+		MsgBox(strPropName & " = " & strProp, , "Return Prop Value")
+	Catch
+	End Try	
+
+End Sub

@@ -1,0 +1,25 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim blnConnected As Boolean
+	
+	
+	'****************************************************************************
+	' TEST Case Vault_IsConnected
+	'****************************************************************************
+	Try
+		blnConnected = oDLL.Vault_IsConnected()
+		MsgBox("Logged In? = " & blnConnected, , "Status")
+	Catch
+	End Try		
+
+
+
+End Sub

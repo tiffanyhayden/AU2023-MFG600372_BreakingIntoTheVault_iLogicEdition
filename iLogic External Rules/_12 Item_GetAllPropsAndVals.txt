@@ -1,0 +1,38 @@
+﻿Imports System.IO.Path
+Imports System.IO
+Imports System.Collections
+
+AddReference "C:\AU2023\AU2023.dll"
+
+
+Sub Main()
+
+	Dim oDLL As New AU2023.VaultLib
+	Dim i As Integer 
+	Dim oDict As Dictionary(Of String, String)
+	Dim strProp As String 
+	Dim strAllProps As String 
+	Dim strItemNum As String 
+
+	'****************************************************************************
+	' TEST CASE Item_GetAllPropsAndVals - Success
+	' 100841902, 100841913
+	'****************************************************************************	
+	Try
+		'strItemNum = "100841902"		'TEST 1
+		strItemNum = "100841913"		'TEST 1
+		
+		oDict = oDLL.Item_GetAllPropsAndVals(strItemNum)
+		
+		For i = 0 To 20
+			strProp = oDict.Keys(i) & " = " & oDict.Values(i)& vbCrLf 
+			strAllProps += strProp
+		Next 
+		
+		MsgBox(strAllProps, , "All Properties and Values")
+
+
+	Catch
+	End Try	
+		
+End Sub
